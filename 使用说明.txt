@@ -1,0 +1,57 @@
+Codex Quota — Mac 菜单栏额度监控
+版本 1.1.0 / 分享版
+
+一、怎么用
+1. 需要 macOS 13 或更新版本，支持 Apple Silicon（M 系列）和 Intel Mac。
+2. 在自己的电脑上安装 Codex / ChatGPT 桌面版并登录自己的 ChatGPT 账号。
+   桌面版建议放在“应用程序”文件夹。也支持已安装、已登录的 Codex CLI。
+3. 将本文件夹中的“Codex Quota.app”拖到“应用程序”，双击打开。
+4. 菜单栏出现百分比即成功；点击百分比可看各额度周期、重置时间和“立即刷新”。
+   它是菜单栏小程序，没有主窗口，也不在 Dock 显示图标。
+
+首次打开：这是个人工具，仅做了本地签名，未经 Apple 公证。
+若系统阻止打开，确认文件来源后，在“系统设置 → 隐私与安全性”中
+找到这一次打开被阻止的提示并选择“仍要打开”。无需关闭系统安全保护。
+
+需要开机运行：系统设置 → 通用 → 登录项，将 Codex Quota.app 加入登录时打开。
+退出：点击菜单栏百分比，选择“退出 Codex Quota”。
+
+二、显示的是什么
+- 菜单栏显示“剩余”百分比，不是已用百分比。
+- 有多个限制周期时，取 Codex 各周期剩余百分比中的较小值。
+  例如 5 小时剩余 80%、7 天剩余 20%，菜单栏显示 20%。
+- 每 5 分钟刷新一次，也可手动刷新。读取失败显示 --%，点击查看错误。
+- 数据来自本机 Codex 的 account/rateLimits/read 接口，不是估算 token。
+- 未登录、API Key 模式或不返回订阅额度的账号，可能无法显示此类额度。
+- 上游 Codex 接口或安装路径变动时，可能需要更新本工具。
+
+三、隐私与账号
+分享包只含程序、源码、构建脚本和说明，没有原作者的账号、密钥、
+登录文件或额度缓存。运行时由本机 Codex 使用接收者自己的登录状态读取额度。
+本工具不提供单独的账号登录界面，不需要填写或转发别人的 Token。
+
+四、运行检查（可选）
+安装到“应用程序”后，在终端执行：
+
+"/Applications/Codex Quota.app/Contents/MacOS/CodexQuota" --check
+
+成功时输出“Codex：剩余 XX%”及其他可用额度分组；失败时输出错误并退出。
+如果使用 CLI 且未登录，先执行 codex login，再点菜单栏“立即刷新”。
+CLI 装在自定义目录时，可先在终端确认 command -v codex 能找到它，
+再从同一终端直接运行上述可执行文件（不加 --check）。
+
+五、源码与重新构建
+Source/App.swift：只监控 Codex 的分享版源码。
+Source/Info.plist：应用配置。
+build.command：双架构构建脚本，需要 Apple Xcode Command Line Tools。
+
+修改源码后，在本文件夹打开终端，执行：
+bash build.command
+
+缺少编译工具时先执行 xcode-select --install，安装完成后重试。
+构建会更新本文件夹中的 Codex Quota.app，不会修改已安装的 Codex / ChatGPT。
+
+Original/BalanceMenuBar.swift 和 Original/Info.plist 是截图双行版本的原始源码。
+截图上行 ¥ 金额是 DeepSeek 余额，下行百分比是 Codex 剩余额度。
+该原始版本另外依赖使用者自己的 DeepSeek 配置，供参考；本包的
+Codex Quota.app 使用 Source/ 中的独立版本，无需 DeepSeek 配置。
